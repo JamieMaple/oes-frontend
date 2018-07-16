@@ -2,8 +2,6 @@ import * as React from 'react'
 import { Switch, Route } from 'react-router-dom'
 import { Layout, Menu, Icon, Breadcrumb } from 'antd'
 
-import IndexView from './IndexView'
-
 const styles = require('./layout.css')
 
 const MenuItem = Menu.Item

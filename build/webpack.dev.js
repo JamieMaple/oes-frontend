@@ -60,6 +60,8 @@ const compiler = webpack(merge(common, {
 
 const app = require('express')()
 
+app.use(fallback())
+
 app.use(require('webpack-dev-middleware')(compiler, {
   publicPath: publicPath,
   contentBase: resolve('static/'),
@@ -76,8 +78,6 @@ app.use(require('webpack-dev-middleware')(compiler, {
 app.use(require('webpack-hot-middleware')(compiler, {
   log: () => {}
 }))
-
-app.use(fallback())
 
 const data = {
   messages: "success"
