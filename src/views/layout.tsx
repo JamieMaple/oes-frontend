@@ -1,10 +1,10 @@
 import * as React from 'react'
-import { Switch, Route } from 'react-router-dom'
+import { Switch, Route, withRouter, RouteComponentProps } from 'react-router-dom'
 import { Layout, Menu, Icon, Breadcrumb } from 'antd'
+import { HTMLTextareaProps } from '../../node_modules/antd/lib/input/TextArea';
 
 const styles = require('./layout.css')
 
-const MenuItem = Menu.Item
 const Header = Layout.Header
 const Content = Layout.Content
 const Footer = Layout.Footer
@@ -12,38 +12,41 @@ const Footer = Layout.Footer
 class NavItem {
   title: string
   icon: string
-  constructor(title, icon) {
+  url: string
+  constructor(title, icon, url) {
     this.title = title
     this.icon = icon
+    this.url = url
   }
 }
 const navList = [
-  new NavItem('试题管理', 'solution'),
-  new NavItem('试卷管理', 'database'),
-  new NavItem('用户管理', 'user'),
+  new NavItem('试卷管理', 'database', '/paper'),
+  new NavItem('试题管理', 'solution', '/question'),
+  new NavItem('用户管理', 'user', '/user'),
 ]
 
-function Sider({className}: React.HTMLAttributes<null>) {
+function Sider({className, history}:  React.HTMLAttributes<null> & RouteComponentProps<null>) {
   return (
     <Layout.Sider className={className} collapsible>
       <Menu theme="dark" defaultSelectedKeys={[navList[0].title]}>
         {
-          navList.map(item => <MenuItem key={item.title}>
+          navList.map(item => <Menu.Item onClick={() => history.push(item.url)}  key={item.title}>
             <Icon type={item.icon} />
             <span>{item.title}</span>
-          </MenuItem>)
+          </Menu.Item>)
         }
       </Menu>
     </Layout.Sider>
   )
 }
 
+const Side = withRouter(Sider) as React.ComponentType<React.HTMLAttributes<{}>>
 
 export default class MainLayout extends React.Component {
   render() {
     return (
       <Layout className={styles['main-layout']}>
-        <Sider className={styles.sider} />
+        <Side className={styles['sider']} />
         <Layout className={styles['inner-layout']}>
           <Header className={styles.header}></Header>
           <Content className={styles['main-content']}>

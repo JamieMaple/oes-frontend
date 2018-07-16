@@ -19,7 +19,7 @@ export default class App extends React.Component {
           <Route path="/user" component={UserListView} />
 
           {/* redirect to paper */}
-          <Redirect from="/" to="/paper" />
+          <Redirect exact from="/" to="/paper" />
         </Switch>
       </Layout>
     )
