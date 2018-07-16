@@ -2,6 +2,7 @@ const webpack = require('webpack')
 const merge = require('webpack-merge')
 const friendlyError = require('friendly-errors-webpack-plugin')
 const open = require('open')
+const fallback = require('connect-history-api-fallback')
 const { port, publicPath } = require('./config')
 const { resolve } = require('./helpers')
 const common = require('./webpack.common')
@@ -76,6 +77,8 @@ app.use(require('webpack-hot-middleware')(compiler, {
   log: () => {}
 }))
 
+app.use(fallback())
+
 const data = {
   messages: "success"
 }
@@ -93,6 +96,8 @@ app.use(fixURLWithPrefix('/login'), (req, res) => {
 app.use(fixURLWithPrefix('/showalltest'), (req, res) => {
   res.json(data)
 })
+
+
 
 app.listen(port, () => {
   console.log('> Starting server...')
