@@ -19,10 +19,9 @@ export interface IPaper {
  *  interfaces
  */
 export interface IUser {
-  id: number,
   user_id: number,
   user_name: string,
-  user_role: number,
+  // user_role: number,
   // user_pwd
 }
 
@@ -30,11 +29,21 @@ export interface IUser {
  *  interfaces
  */
 export interface IQuestion {
-  id: number,
   test_id: number,
   test_num: number,
   test_content: string,
   test_score: number,
   test_answser: string,
   reg_date: Date,
+}
+
+/**
+ *  result
+ */
+export interface IResult {
+  user_id: number,
+  user_name: string,
+  test_id: number,
+  test_title: string,
+  test_datas: IQuestion[],
 }

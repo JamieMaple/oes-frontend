@@ -1,4 +1,4 @@
-import { paperRequest, setRequestURLPrefix } from '../../utils/request'
+import { paperRequest, setRequestURLPrefix } from '../utils/request'
 
 beforeAll(() => {
   setRequestURLPrefix('http://10.23.39.140:8225')
@@ -19,7 +19,11 @@ describe('#paper', function() {
   })
   it('#add a paper', async () => {
     try {
-      const res = await paperRequest.add(addPaperId, testTitle, testAnswer).then(res => res.data)
+      const res = await paperRequest.add({
+        paper_id: addPaperId,
+        paper_title: testTitle,
+        paper_answer: testAnswer,
+      }).then(res => res.data)
       expect(res.code).toBe(200)
     } catch(e) {
       throw e
@@ -49,3 +53,9 @@ describe('#paper', function() {
     }
   })
 })
+
+describe('#question', function() {
+
+})
+
+// describe('#')
