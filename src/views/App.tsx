@@ -2,9 +2,9 @@ import * as React from 'react'
 import { Switch, Route, Redirect } from 'react-router-dom'
 import Layout from './layout'
 
-import { PaperListView } from './PaperView'
-import { QuestionListView } from './QuestionView'
-import { UserListView } from './UserView'
+import { PaperListView, PaperDetailView } from './PaperView'
+// import { QuestionListView } from './QuestionView'
+import { UserListView, UserDetailView } from './UserView'
 
 export default class App extends React.Component {
   render() {
@@ -12,10 +12,12 @@ export default class App extends React.Component {
       <Layout>
         <Switch>
           {/* paper */}
+          <Route path="/paper/:id" component={PaperDetailView} />
           <Route path="/paper" component={PaperListView} />
           {/* question */}
-          <Route path="/question" component={QuestionListView} />
+          {/* <Route path="/question" component={QuestionListView} /> */}
           {/* user */}
+          <Route path="/user/:id" component={UserDetailView} />
           <Route path="/user" component={UserListView} />
 
           {/* redirect to paper */}

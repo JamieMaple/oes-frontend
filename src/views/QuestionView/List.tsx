@@ -1,7 +1,22 @@
 import * as React from 'react'
+import { Table } from 'antd'
 
-export default function() {
+const { Column } = Table
+
+function QuestionTable() {
   return (
-    <div>question list</div>
+    <Table>
+      <Column title="" />
+    </Table>
   )
+}
+
+export default class extends React.Component {
+  render() {
+    return (
+      <div>
+    
+      </div>
+    )
+  }
 }

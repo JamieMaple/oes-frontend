@@ -24,7 +24,7 @@ const requestURL = {
   }
 }
 
-const prefix = ''
+const prefix = '/oesrd'
 addURLPrefix(requestURL, prefix)
 
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'
@@ -100,14 +100,24 @@ function mapQuestionToTest({
   }
 }
 
+export const userRequest = {
+  getAll(): AxiosPromise<IResponse<IUser[]>> {
+    return axios.get(requestURL.user.getAll)
+  },
+  add(): AxiosPromise<IResponse<IUser[]>> {
+    return axios.post(requestURL.user.add)
+  },
+  delete(id: number): AxiosPromise<IResponse<null>> {
+    const data = stringify({ student_id: id })
+    return axios.post(requestURL.user.delete)
+  }
+}
+
 export const questionRequest = {
   add(question: IQuestionConfig): AxiosPromise<IResponse<null>> {
     const data = stringify(mapQuestionToTest(question))
     return axios.post(requestURL.user.add, data)
   },
-  // getAll(): AxiosPromise<IResponse<IUser[]>> {
-  //   return axios.get(requestURL.user.getAll)
-  // },
   // delete(id: number): AxiosPromise<IResponse<null>> {
   //   return axios.post(requestURL.user.delete)
   // },

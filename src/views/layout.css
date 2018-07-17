@@ -19,6 +19,7 @@
   margin: 0 16px;
   .content {
     min-height: 400px;
+    max-width: 1000px;
     padding: 24px;
     background-color: #fff;
   }
