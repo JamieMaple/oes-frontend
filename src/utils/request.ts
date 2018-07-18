@@ -36,21 +36,46 @@ export function setRequestURLPrefix(prefix) {
 /** 
  *  paper request helpers
  */
+export interface IQuestionConfig {
+  questionNum: number,
+  questionTitle: string,
+  questionScore: number,
+  questionAnswer: string,
+}
+
+// 后端字段有毒...
+function mapQuestionToTest({
+  questionNum: test_num,
+  questionAnswer: test_answer,
+  questionTitle: test_title,
+  questionScore: test_score,
+}: IQuestionConfig) {
+  return {
+    test_num,
+    test_title,
+    test_score,
+    test_answer,
+  }
+}
+
 export interface IPaperConfig {
-  paper_id: number,
-  paper_answer: string,
-  paper_title: string,
+  paperID: number;
+  // paperAnswer?: string;
+  paperTitle: string;
+  questions: IQuestion[];
 }
 
 function mapPaperToTest({
-  paper_id: test_id,
-  paper_title: test_title,
-  paper_answer: test_answer,
+  paperID: test_id,
+  paperTitle: test_title,
+  // paperAnswer: test_answer,
+  questions,
 }: IPaperConfig) {
   return {
     test_id,
     test_title,
-    test_answer,
+    // test_answer,
+    questions: questions.map(mapQuestionToTest as any),
   }
 }
 
@@ -59,15 +84,19 @@ export const paperRequest = {
     return axios.get(requestURL.paper.getAll)
   },
   add(paper: IPaperConfig): AxiosPromise<IResponse<null>> {
-    const data = stringify(mapPaperToTest(paper))
-    return axios.post(requestURL.paper.add, data)
+    const data = mapPaperToTest(paper)
+    return axios.post(requestURL.paper.add, data, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
   },
   getOne(id: number): AxiosPromise<IResponse<IQuestion[]>> {
     const data = stringify({ id })
     return axios.post(requestURL.paper.getOne, data)
   },
   delete(id: number): AxiosPromise<IResponse<null>> {
-    const data = stringify({ id })
+    const data = stringify({ num: id })
     return axios.post(requestURL.paper.delete, data)
   },
 }
@@ -75,31 +104,6 @@ export const paperRequest = {
 /**
  *  user request
  */
-export interface IQuestionConfig {
-  paper_id: number,
-  question_num: number,
-  question_content: string,
-  question_score: number,
-  question_answer: string,
-}
-
-// 后端字段有毒...
-function mapQuestionToTest({
-  paper_id: test_id,
-  question_num: test_num,
-  question_answer: test_answer,
-  question_content: test_content,
-  question_score: test_score,
-}: IQuestionConfig) {
-  return {
-    test_id,
-    test_num,
-    test_content,
-    test_score,
-    test_answer,
-  }
-}
-
 export const userRequest = {
   getAll(): AxiosPromise<IResponse<IUser[]>> {
     return axios.get(requestURL.user.getAll)
@@ -129,7 +133,6 @@ export const questionRequest = {
 /**
  *  request
  */
-
 export const resultRequest = {
   get(userId: number, paperId: number): AxiosPromise<IResponse<IResult>> {
     return axios.get(requestURL.result.get, {

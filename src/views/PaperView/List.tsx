@@ -1,17 +1,23 @@
 import * as React from 'react'
+import { Link } from 'react-router-dom'
 import { List, Avatar, Row, Col, Button, Input, message } from 'antd'
 import { IPaper } from '../../utils/types'
 import { paperRequest } from '../../utils/request'
+import TopMenu from '../components/TopMenu'
 
 function PaperList({
-  data
-}: { data: IPaper[] }) {
+  data,
+  deleteItem,
+}: {data: IPaper[], deleteItem: Function}) {
   return (
     <List
       itemLayout="horizontal"
       dataSource={data}
       renderItem={(item: IPaper) => (
-        <List.Item actions={[<a>详情</a>, <a>修改</a>, <a>删除</a>]}>
+        <List.Item actions={[
+          <Link to={`/paper/edit/${item.id}`}>修改</Link>,
+          <a onClick={deleteItem.bind(undefined, item.id)} href="javascript:;">删除</a>,
+        ]}>
           <List.Item.Meta
             avatar={<Avatar size="large" style={{ backgroundColor: '#f56a00' }}>Paper</Avatar>}
             title={item.test_title}
@@ -23,25 +29,16 @@ function PaperList({
   )
 }
 
-function TopMenu() {
-  return (
-    <Row type="flex" justify="space-between" style={{ marginBottom: 12 }}>
-      <Col span={4}>
-        <Button type="primary" icon="plus">添加</Button>
-      </Col>
-      <Col span={10}>
-        <Input.Search placeholder="搜索一下" enterButton />
-      </Col>
-    </Row>
-  )
-}
-
 export default class ListView extends React.Component {
   state = {
     data: [] as IPaper[],
   }
 
-  async componentDidMount() {
+  componentDidMount() {
+    this.loadData()
+  }
+
+  loadData = async () => {
     try {
       const res = await paperRequest.getAll()
       this.setState(prev => ({
@@ -53,11 +50,21 @@ export default class ListView extends React.Component {
     }
   }
 
+  deletePaper = async (id: number) => {
+    try {
+      await paperRequest.delete(id)
+      message.success('删除成功')
+      this.loadData()
+    } catch(err) {
+      message.error(`删除失败${err.message}`)
+    }
+  }
+
   render() {
     return (
       <div>
-        <TopMenu />
-        <PaperList data={this.state.data} />
+        <TopMenu to="/paper/new" />
+        <PaperList data={this.state.data} deleteItem={this.deletePaper} />
       </div>
     )
   }

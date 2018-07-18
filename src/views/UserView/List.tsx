@@ -2,6 +2,7 @@ import * as React from 'react'
 import { Table, Divider, message } from 'antd'
 import { IUser } from '../../utils/types'
 import { userRequest } from '../../utils/request'
+import TopMenu from '../components/TopMenu'
 
 const { Column } = Table
 
@@ -14,8 +15,8 @@ function UserTable({ users }: { users: IUser[] }) {
         <span>
           <a href="javascript:;">详情</a>
           <Divider type="vertical" />
-          <a href="javascript:;">修改</a>
-          <Divider type="vertical" />
+          {/* <a href="javascript:;">修改</a>
+          <Divider type="vertical" /> */}
           <a href="javascript:;">删除</a>
         </span>
       )} />
@@ -43,6 +44,7 @@ export default class extends React.Component {
   render() {
     return (
       <div>
+        <TopMenu />
         <UserTable users={this.state.users} />
       </div>
     )

@@ -135,11 +135,11 @@ router.post('/addquestion', (req, res) => {
 })
 
 // user
-router.post('/stu/get', (req, res) => {
+router.get('/stu/get', (req, res) => {
   const data = Mock.mock({
     ...commonMockData,
     'data|0-20': [{
-      'user_id|+1': 1,
+      'id|+1': 1,
       'user_name': Mock.mock('@cword(5, 8)')
     }]
   })

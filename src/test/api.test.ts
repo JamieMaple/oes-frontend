@@ -20,9 +20,9 @@ describe('#paper', function() {
   it('#add a paper', async () => {
     try {
       const res = await paperRequest.add({
-        paper_id: addPaperId,
-        paper_title: testTitle,
-        paper_answer: testAnswer,
+        paperID: addPaperId,
+        paperTitle: testTitle,
+        questions: [],
       }).then(res => res.data)
       expect(res.code).toBe(200)
     } catch(e) {
