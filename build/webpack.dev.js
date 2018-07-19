@@ -5,7 +5,8 @@ const open = require('open')
 const express = require('express')
 const fallback = require('connect-history-api-fallback')
 const Mock = require('mockjs')
-const { port, publicPath } = require('./config')
+const proxy = require('http-proxy-middleware')
+const { port, publicPath, proxyIP, isUsingMock } = require('./config')
 const { resolve } = require('./helpers')
 const common = require('./webpack.common')
 
@@ -61,24 +62,33 @@ const compiler = webpack(merge(common, {
 // hmr
 
 const app = express()
-const router = express.Router()
+const mockRouter = express.Router()
+const proxyRouter = express.Router()
 
 const prefix = '/oesrd'
 
-app.use(prefix, router)
+if (isUsingMock) {
+  app.use(prefix, mockRouter)
+} else {
+  // debug with server
+  app.use(proxy(function fileter(pathname, req) {
+    return pathname.match(`^${prefix}`)
+  }, {
+    target: proxyIP,
+  }))
+}
 
 const commonMockData = {
-  'code|1': [
-    200,
-    201,
-    300,
-  ],
+  'code': 200,
   'message': 'mock success',
   'data': null,
 }
 
+/**
+ *  mock data
+ */
 // paper
-router
+mockRouter
   .get('/showalltest', (req, res) => {
     // all paper
     const data = Mock.mock({
@@ -94,24 +104,26 @@ router
     res.json(data)
   })
   .post('/addtest', (req, res) => {
-    // TODO: exam the req body with encode url
     const data = {
       ...commonMockData,
       message: 'add test success'
     }
     res.json(data)
   })
-  .get('/showatest', (req, res) => {
+  .post('/showatest', (req, res) => {
     const data = Mock.mock({
       ...commonMockData,
-      'data|1-30': [{
-        'id|+1': 1,
-        'reg_date': +new Date(Mock.mock('@date')),
-        'test_answer|1': ['A', 'B', 'C', 'D'],
-        'test_content': Mock.mock('@cword(5, 10)'),
-        'test_id|+1': 10,
-        'test_score|5-20': 100
-      }]
+      'data': {
+        test_id: 100,
+        test_title: '试卷名称',
+        'questions|1-30': [{
+          "test_num|+1": 1,
+          'test_title': Mock.mock('@cword(5, 10)'),
+          'test_id|+1': 10,
+          'test_answer|1': ['A', 'B', 'C', 'D'],
+          'test_score|5-20': 100,
+        }]
+      }
     })
     res.json(data)
   })
@@ -125,7 +137,7 @@ router
   })
 
 // question
-router.post('/addquestion', (req, res) => {
+mockRouter.post('/add/test_question', (req, res) => {
   const data = Mock.mock({
     ...commonMockData,
     message: 'add a question'
@@ -135,7 +147,7 @@ router.post('/addquestion', (req, res) => {
 })
 
 // user
-router.get('/stu/get', (req, res) => {
+mockRouter.get('/stu/get', (req, res) => {
   const data = Mock.mock({
     ...commonMockData,
     'data|0-20': [{
@@ -145,6 +157,12 @@ router.get('/stu/get', (req, res) => {
   })
 
   res.json(data)
+})
+mockRouter.post('/login', (req, res) => {
+  res.json({
+    code: 200,
+    ...data,
+  })
 })
 
 app.use(fallback())

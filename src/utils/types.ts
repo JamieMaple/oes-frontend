@@ -15,6 +15,10 @@ export interface IPaper {
   reg_date: Date;
 }
 
+export interface IPaperWithQuestions extends IPaper {
+  questions: IQuestion[];
+}
+
 /** user
  *  interfaces
  */
@@ -29,9 +33,9 @@ export interface IUser {
  *  interfaces
  */
 export interface IQuestion {
-  test_id: number;
+  test_id: number
   test_num: number;
-  test_content: string;
+  test_title: string;
   test_score: number;
   test_answser: string;
   reg_date: Date;

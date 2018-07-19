@@ -44,7 +44,7 @@ export default class extends React.Component {
   render() {
     return (
       <div>
-        <TopMenu />
+        {/* <TopMenu to="/user" /> */}
         <UserTable users={this.state.users} />
       </div>
     )

@@ -1,12 +1,12 @@
 import axios, { AxiosPromise } from 'axios'
 import { stringify } from 'qs'
-import { IResponse, IPaper, IQuestion, IUser, IResult } from './types'
+import { IResponse, IPaper, IQuestion, IUser, IResult, IPaperWithQuestions } from './types'
 import { addURLPrefix } from './helper'
 
 const requestURL = {
   paper: {
     getAll: '/showalltest',
-    add: '/addtest',
+    add: '/add/test_question',
     getOne: '/showatest',
     delete: '/deleteatest',
   },
@@ -18,6 +18,7 @@ const requestURL = {
     add: '/stu/add',
     delete: '/stu/delete',
     update: '/stu/update',
+    login: '/login',
   },
   result: {
     get: '/show/result'  // id param
@@ -27,7 +28,15 @@ const requestURL = {
 const prefix = '/oesrd'
 addURLPrefix(requestURL, prefix)
 
+// 迫于后端淫威
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'
+axios.interceptors.response.use((response) => {
+  if (response.data && response.data.code >= 300) {
+    throw new Error(response.data.message)
+  }
+  return response
+})
+
 
 export function setRequestURLPrefix(prefix) {
   addURLPrefix(requestURL, prefix)
@@ -37,10 +46,10 @@ export function setRequestURLPrefix(prefix) {
  *  paper request helpers
  */
 export interface IQuestionConfig {
-  questionNum: number,
-  questionTitle: string,
-  questionScore: number,
-  questionAnswer: string,
+  questionNum: number;
+  questionTitle: string;
+  questionScore: number;
+  questionAnswer: string;
 }
 
 // 后端字段有毒...
@@ -62,7 +71,7 @@ export interface IPaperConfig {
   paperID: number;
   // paperAnswer?: string;
   paperTitle: string;
-  questions: IQuestion[];
+  questions: IQuestionConfig[];
 }
 
 function mapPaperToTest({
@@ -91,7 +100,7 @@ export const paperRequest = {
       }
     })
   },
-  getOne(id: number): AxiosPromise<IResponse<IQuestion[]>> {
+  getOne(id: number): AxiosPromise<IResponse<IPaperWithQuestions>> {
     const data = stringify({ id })
     return axios.post(requestURL.paper.getOne, data)
   },
@@ -108,6 +117,10 @@ export const userRequest = {
   getAll(): AxiosPromise<IResponse<IUser[]>> {
     return axios.get(requestURL.user.getAll)
   },
+  login(username: string, password: string): AxiosPromise<IResponse<null>> {
+    const data = stringify({ username, password })
+    return axios.post(requestURL.user.login, data)
+  },
   add(): AxiosPromise<IResponse<IUser[]>> {
     return axios.post(requestURL.user.add)
   },
@@ -122,12 +135,6 @@ export const questionRequest = {
     const data = stringify(mapQuestionToTest(question))
     return axios.post(requestURL.user.add, data)
   },
-  // delete(id: number): AxiosPromise<IResponse<null>> {
-  //   return axios.post(requestURL.user.delete)
-  // },
-  // update(): AxiosPromise<IResponse<null>> {
-  //   return axios.post(requestURL.user.update)
-  // },
 }
 
 /**

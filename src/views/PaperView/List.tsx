@@ -15,7 +15,7 @@ function PaperList({
       dataSource={data}
       renderItem={(item: IPaper) => (
         <List.Item actions={[
-          <Link to={`/paper/edit/${item.id}`}>修改</Link>,
+          <Link to={`/paper/${item.id}`}>详情</Link>,
           <a onClick={deleteItem.bind(undefined, item.id)} href="javascript:;">删除</a>,
         ]}>
           <List.Item.Meta
